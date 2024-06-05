@@ -1,47 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import './App.css';
 
-const movies = [
-  { id: 1, title: 'Phim 1', year: 2015 },
-  { id: 2, title: 'Phim 2', year: 2015 },
-  { id: 3, title: 'Phim 3', year: 2015 },
-  { id: 4, title: 'Phim 4', year: 2015 },
-  { id: 5, title: 'Phim 5', year: 2015 },
-  { id: 6, title: 'Phim 6', year: 2015 },
-  // ...
-];
+const MovieUI = () => {
+  const [movies, setMovies] = useState([
+    { id: 1, title: 'Room', duration: '117 min', year: '2015' },
+    { id: 2, title: 'Whiplash', duration: '167 min', year: '2015' },
+    { id: 3, title: 'Mad Max', duration: '120 min', year: '2015' },
+    { id: 4, title: 'The Revenant', duration: '156 min', year: '2015' },
+    // thêm các phim khác vào đây
+  ]);
 
-const HomePage = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
-  const handleNext = () => {
-    setCurrentIndex(currentIndex + 4);
+  useEffect(() => {
+    // hiển thị nút next nếu có nhiều hơn 4 phim
+    if (movies.length > 4) {
+      document.querySelector('.next').style.display = 'block';
+    } else {
+      document.querySelector('.next').style.display = 'none';
+    }
+  }, [movies]);
+
+  const handleNextClick = () => {
+    setCurrentSlide((currentSlide + 1) % movies.length);
   };
 
-  const handlePrev = () => {
-    setCurrentIndex(currentIndex - 4);
+  const handlePrevClick = () => {
+    setCurrentSlide((currentSlide - 1 + movies.length) % movies.length);
   };
-
-  const displayedMovies = movies.slice(currentIndex, currentIndex + 4);
 
   return (
-    <div>
-      <h1>Trang chủ</h1>
-      <ul>
-        {displayedMovies.map((movie) => (
-          <li key={movie.id}>
-            <h2>{movie.title}</h2>
-            <p>{movie.year}</p>
-          </li>
+    <div className="container">
+      <h1>Most Popular Movies</h1>
+      <div className="movie-list">
+        {movies.slice(currentSlide, currentSlide + 4).map((movie) => (
+          <div key={movie.id} className="movie">
+            <img src={`/${movie.title}.jpg`} alt={movie.title} />
+            <h3>{movie.title}</h3>
+            <p>{movie.duration} {movie.year}</p>
+          </div>
         ))}
-      </ul>
-      {currentIndex > 0 && (
-        <button onClick={handlePrev}> Prev </button>
-      )}
-      {currentIndex + 4 < movies.length && (
-        <button onClick={handleNext}> Next </button>
-      )}
+      </div>
+      <div className="controls">
+        <button className="prev" onClick={handlePrevClick}>
+          &lt;
+        </button>
+        <button className="next" onClick={handleNextClick}>
+          &gt;
+        </button>
+      </div>
     </div>
   );
 };
 
-export default HomePage;
+export default MovieUI;
